@@ -21,8 +21,13 @@ describe("fetchDiscoveryDocument", () => {
       jwks_uri: `${issuer}/jwks`,
     };
 
-    const fetchMock = vi.fn(async (input: RequestInfo) => {
-      const u = typeof input === "string" ? input : input.url;
+    const fetchMock = vi.fn(async (input: string | URL | Request) => {
+      const u =
+        typeof input === "string"
+          ? input
+          : input instanceof URL
+            ? input.href
+            : input.url;
       if (u.includes("/.well-known/openid-configuration")) {
         return new Response(JSON.stringify(docJson), {
           status: 200,
