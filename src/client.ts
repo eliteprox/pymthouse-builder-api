@@ -1,6 +1,6 @@
 import {
   allowInsecureRequests,
-  ClientSecretBasic,
+  ClientSecretPost,
   clientCredentialsGrantRequest,
   customFetch,
   genericTokenEndpointRequest,
@@ -203,7 +203,7 @@ export class PmtHouseClient {
       allowInsecureHttp: this.allowInsecureHttp,
     });
     const client = m2mClient(this.m2mClientId);
-    const clientAuth = ClientSecretBasic(this.m2mClientSecret);
+    const clientAuth = ClientSecretPost(this.m2mClientSecret);
     const params = new URLSearchParams();
     params.set("subject_token", input.userJwt);
     params.set("subject_token_type", SUBJECT_ACCESS_TOKEN_TYPE);
@@ -236,7 +236,7 @@ export class PmtHouseClient {
       allowInsecureHttp: this.allowInsecureHttp,
     });
     const client = m2mClient(this.m2mClientId);
-    const clientAuth = ClientSecretBasic(this.m2mClientSecret);
+    const clientAuth = ClientSecretPost(this.m2mClientSecret);
     const params = new URLSearchParams();
     params.set("scope", scope);
 
@@ -266,7 +266,7 @@ export class PmtHouseClient {
       allowInsecureHttp: this.allowInsecureHttp,
     });
     const client = m2mClient(this.m2mClientId);
-    const clientAuth = ClientSecretBasic(this.m2mClientSecret);
+    const clientAuth = ClientSecretPost(this.m2mClientSecret);
     const params = new URLSearchParams();
     params.set("subject_token", input.userJwt);
     params.set("subject_token_type", SUBJECT_ACCESS_TOKEN_TYPE);
