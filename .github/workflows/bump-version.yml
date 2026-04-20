@@ -1,0 +1,43 @@
+name: bump-version
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: >
+          Semver bump keyword (patch, minor, major, prerelease, …) or an exact
+          version (e.g. 2.0.0 or 1.0.0-rc.1). Passed to `pnpm version`.
+        required: true
+        default: patch
+        type: string
+
+jobs:
+  bump:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm test
+      - run: pnpm build
+      - name: Configure Git
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      - name: Bump package version
+        env:
+          VERSION_BUMP: ${{ inputs.version }}
+        run: |
+          pnpm version "$VERSION_BUMP" -m "chore: release v%s"
+      - name: Push branch and tag
+        run: |
+          git push origin "HEAD:${{ github.ref_name }}"
+          git push origin --tags
