@@ -18,9 +18,22 @@ jobs:
           node-version: 24
           cache: pnpm
           registry-url: "https://registry.npmjs.org"
+          scope: "@pymthouse"
       - run: pnpm install --frozen-lockfile
       - run: pnpm test
       - run: pnpm build
+      - name: Verify NPM_TOKEN is configured
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "${NODE_AUTH_TOKEN}" ]; then
+            echo "::error::secrets.NPM_TOKEN is empty. Add an npm automation token (classic publish or granular write) in repo Settings → Secrets → Actions."
+            exit 1
+          fi
+      - name: Configure registry auth for pnpm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: pnpm config set "//registry.npmjs.org/:_authToken" "${NODE_AUTH_TOKEN}"
       - run: pnpm publish --access public --no-git-checks --provenance
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
