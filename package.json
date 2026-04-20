@@ -77,6 +77,6 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/pymthouse/node-pymt-sdk.git"
+    "url": "https://github.com/eliteprox/pymthouse-builder-api.git"
   }
 }

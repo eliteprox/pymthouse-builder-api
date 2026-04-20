@@ -1,3 +1,5 @@
+# Provenance: package.json "repository.url" must be the same GitHub repo this
+# workflow runs in, or npm returns E422 when verifying the sigstore bundle.
 name: release
 on:
   push:
