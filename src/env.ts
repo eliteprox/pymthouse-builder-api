@@ -1,6 +1,24 @@
 import { PmtHouseClient } from "./client.js";
 import { PmtHouseError } from "./errors.js";
 
+/**
+ * Fail fast if this module is bundled for the browser. M2M secrets must never
+ * ship to clients; Next.js users can also re-export behind `import "server-only"`
+ * for build-time enforcement (see README).
+ */
+function assertEnvModuleServerOnly(): void {
+  if (
+    typeof globalThis !== "undefined" &&
+    typeof (globalThis as { window?: unknown }).window !== "undefined"
+  ) {
+    throw new Error(
+      "@pymthouse/builder-api/env is server-only: do not import createPmtHouseClientFromEnv or getPymthouseBaseUrl in client-side code. Use a Route Handler, Server Action, or other server/runtime; keep M2M credentials out of the browser bundle.",
+    );
+  }
+}
+
+assertEnvModuleServerOnly();
+
 let cachedClient: PmtHouseClient | null = null;
 
 function requiredEnv(name: string): string {

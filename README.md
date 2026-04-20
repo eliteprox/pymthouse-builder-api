@@ -52,6 +52,27 @@ const client = new PmtHouseClient({
 
 Authoritative API behavior: [PymtHouse `docs/builder-api.md`](https://github.com/pymthouse/pymthouse/blob/main/docs/builder-api.md).
 
+## Server-only: `createPmtHouseClientFromEnv` / `@pymthouse/builder-api/env`
+
+M2M credentials are **confidential**. The `env` entry point:
+
+1. **Throws as soon as the module loads in a browser** (detects `globalThis.window`), so a mistaken client import fails immediately instead of silently bundling secrets.
+2. Does **not** stop someone from putting `m2mClientSecret` in `new PmtHouseClient({ ... })` in client code—you still must not do that.
+
+**Next.js — build-time guard (optional):** in a file that is only used from the server, add the official marker so the bundler errors instead of shipping the module to the client:
+
+```ts
+// e.g. lib/pymthouse-server.ts
+import "server-only";
+
+export {
+  createPmtHouseClientFromEnv,
+  getPymthouseBaseUrl,
+} from "@pymthouse/builder-api/env";
+```
+
+Import `createPmtHouseClientFromEnv` only from that wrapper (or from Route Handlers / Server Actions directly).
+
 ## Next.js (monorepo) consumption
 
 When the SDK lives as a sibling folder (e.g. `../node-pymt-sdk`), enable `experimental.externalDir` in `next.config` and re-export from a small `lib` shim that points at `../../node-pymt-sdk` (see the `website` app in this org). Published installs from npm use the package name directly without shims.

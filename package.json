@@ -1,35 +1,35 @@
 {
   "name": "@pymthouse/builder-api",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "PymtHouse Builder API and OIDC client (OpenID-certified oauth4webapi)",
   "type": "module",
   "main": "./dist/index.cjs",
-  "module": "./dist/index.mjs",
+  "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
+      "import": "./dist/index.js",
       "require": "./dist/index.cjs"
     },
     "./format": {
       "types": "./dist/format.d.ts",
-      "import": "./dist/format.mjs",
+      "import": "./dist/format.js",
       "require": "./dist/format.cjs"
     },
     "./env": {
       "types": "./dist/env.d.ts",
-      "import": "./dist/env.mjs",
+      "import": "./dist/env.js",
       "require": "./dist/env.cjs"
     },
     "./device": {
       "types": "./dist/device.d.ts",
-      "import": "./dist/device.mjs",
+      "import": "./dist/device.js",
       "require": "./dist/device.cjs"
     },
     "./verify": {
       "types": "./dist/verify.d.ts",
-      "import": "./dist/verify.mjs",
+      "import": "./dist/verify.js",
       "require": "./dist/verify.cjs"
     }
   },
@@ -43,8 +43,7 @@
     "node": ">=20"
   },
   "publishConfig": {
-    "access": "public",
-    "provenance": true
+    "access": "public"
   },
   "scripts": {
     "build": "tsup",
