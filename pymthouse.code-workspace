@@ -1,0 +1,16 @@
+{
+    "folders": [
+		{
+			"path": "../pymthouse"
+		},
+		{
+			"path": "../website"
+		},
+		{
+			"path": "../python-gateway"
+		},
+		{
+			"path": "."
+		}
+	]
+}
