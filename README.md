@@ -50,7 +50,7 @@ const client = new PmtHouseClient({
 
 ## Documentation
 
-Authoritative API behavior: [PymtHouse `docs/builder-api.md`](https://github.com/pymthouse/pymthouse/blob/main/docs/builder-api.md).
+Authoritative API behavior: [PymtHouse `docs/builder-api.md`](https://github.com/eliteprox/pymthouse/blob/main/docs/builder-api.md).
 
 ## Server-only: `createPmtHouseClientFromEnv` / `@pymthouse/builder-api/env`
 
