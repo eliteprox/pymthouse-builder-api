@@ -1,5 +1,6 @@
 import { PmtHouseClient } from "./client.js";
 import { PmtHouseError } from "./errors.js";
+import { stripTrailingSlashes } from "./string-utils.js";
 
 /**
  * Fail fast if this module is bundled for the browser. M2M secrets must never
@@ -39,7 +40,7 @@ function requiredEnv(name: string): string {
  */
 export function getPymthouseBaseUrl(): string {
   const issuerUrl = requiredEnv("PYMTHOUSE_ISSUER_URL");
-  return new URL(issuerUrl.replace(/\/+$/, "")).origin;
+  return new URL(stripTrailingSlashes(issuerUrl)).origin;
 }
 
 /**

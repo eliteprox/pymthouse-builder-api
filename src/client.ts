@@ -12,6 +12,7 @@ import {
 import { encodeClientSecretBasic } from "./encoding.js";
 import { loadAuthorizationServer, authorizationServerToOidcDocument } from "./discovery.js";
 import { PmtHouseError } from "./errors.js";
+import { stripTrailingSlashes } from "./string-utils.js";
 import {
   mapOAuthError,
   m2mClient,
@@ -66,7 +67,7 @@ export class PmtHouseClient {
   private readonly allowInsecureHttp: boolean;
 
   constructor(options: PmtHouseClientOptions) {
-    this.issuerUrl = options.issuerUrl.replace(/\/+$/, "");
+    this.issuerUrl = stripTrailingSlashes(options.issuerUrl);
     this.publicClientId = options.publicClientId;
     this.m2mClientId = options.m2mClientId;
     this.m2mClientSecret = options.m2mClientSecret;
@@ -84,7 +85,7 @@ export class PmtHouseClient {
   }
 
   verifyIssuer(iss: string): boolean {
-    const candidate = iss.trim().replace(/\/+$/, "");
+    const candidate = stripTrailingSlashes(iss.trim());
     return candidate === this.issuerUrl;
   }
 
