@@ -6,6 +6,7 @@ import {
   type AuthorizationServer,
 } from "oauth4webapi";
 import { PmtHouseError } from "./errors.js";
+import { stripTrailingSlashes } from "./string-utils.js";
 import type { FetchLike, OidcDiscoveryDocument } from "./types.js";
 
 export function authorizationServerToOidcDocument(as: AuthorizationServer): OidcDiscoveryDocument {
@@ -37,7 +38,7 @@ type CacheEntry = {
 const discoveryCache = new Map<string, CacheEntry>();
 
 function normalizedIssuerKey(issuerUrl: string): string {
-  return issuerUrl.replace(/\/+$/, "");
+  return stripTrailingSlashes(issuerUrl);
 }
 
 export interface LoadAuthorizationServerOptions {
