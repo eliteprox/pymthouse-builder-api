@@ -126,4 +126,77 @@ describe("PmtHouseClient signer session exchange", () => {
     expect(params.has("scope")).toBe(false);
     expect(params.has("client_secret")).toBe(false);
   });
+
+  it("forwards an explicit resource unchanged on signer session exchange", async () => {
+    clearDiscoveryCache(ISSUER);
+    const explicitResource = "https://explicit.resource";
+    const requests: Request[] = [];
+    const bodies: string[] = [];
+    const fetchImpl: typeof fetch = async (input, init) => {
+      const request = new Request(input, init);
+      requests.push(request);
+      bodies.push(await request.clone().text());
+
+      if (request.url.endsWith("/.well-known/openid-configuration")) {
+        return json({
+          issuer: ISSUER,
+          authorization_endpoint: `${ISSUER}/authorize`,
+          token_endpoint: TOKEN_ENDPOINT,
+          jwks_uri: `${ISSUER}/jwks`,
+        });
+      }
+
+      if (request.url === USER_TOKEN_ENDPOINT) {
+        return json({
+          access_token: "eyJ.short.jwt",
+          refresh_token: "refresh",
+          token_type: "Bearer",
+          expires_in: 900,
+          scope: "sign:job",
+          subject_type: "app_user",
+        });
+      }
+
+      if (request.url === TOKEN_ENDPOINT) {
+        return json({
+          access_token: "pmth_long_lived",
+          token_type: "Bearer",
+          expires_in: 90 * 24 * 60 * 60,
+          issued_token_type: "urn:ietf:params:oauth:token-type:access_token",
+          scope: "sign:job",
+        });
+      }
+
+      throw new Error(`Unexpected request: ${request.url}`);
+    };
+
+    const token = await createClient(fetchImpl).mintUserSignerSessionToken({
+      externalUserId: "user-1",
+      scope: "sign:job",
+      resource: explicitResource,
+    });
+
+    expect(token.access_token).toBe("pmth_long_lived");
+    expect(token.expires_in).toBe(90 * 24 * 60 * 60);
+
+    const tokenRequestIndex = requests.findIndex((request) => request.url === TOKEN_ENDPOINT);
+    expect(tokenRequestIndex).toBeGreaterThanOrEqual(0);
+    const tokenRequest = requests[tokenRequestIndex];
+    const params = new URLSearchParams(bodies[tokenRequestIndex]);
+
+    expect(tokenRequest.headers.get("Authorization")).toBe(BASIC_AUTH);
+    expect(params.get("grant_type")).toBe(
+      "urn:ietf:params:oauth:grant-type:token-exchange",
+    );
+    expect(params.get("subject_token")).toBe("eyJ.short.jwt");
+    expect(params.get("subject_token_type")).toBe(
+      "urn:ietf:params:oauth:token-type:access_token",
+    );
+    expect(params.get("requested_token_type")).toBe(
+      "urn:ietf:params:oauth:token-type:access_token",
+    );
+    expect(params.get("resource")).toBe(explicitResource);
+    expect(params.has("scope")).toBe(false);
+    expect(params.has("client_secret")).toBe(false);
+  });
 });

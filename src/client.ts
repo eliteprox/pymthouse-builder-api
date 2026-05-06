@@ -275,7 +275,11 @@ export class PmtHouseClient {
     params.set("subject_token", input.userJwt);
     params.set("subject_token_type", SUBJECT_ACCESS_TOKEN_TYPE);
     params.set("requested_token_type", REQUESTED_ACCESS_TOKEN_TYPE);
-    params.set("resource", stripTrailingSlashes(input.resource ?? this.issuerUrl));
+    const resourceCandidate =
+      typeof input.resource === "string" && input.resource.trim() !== ""
+        ? input.resource.trim()
+        : this.issuerUrl;
+    params.set("resource", stripTrailingSlashes(resourceCandidate));
 
     try {
       const response = await genericTokenEndpointRequest(
